@@ -42,7 +42,8 @@
        * probably use async/await as well for more sane-looking code.
        */
 
-      if(localStorage.getItem('email')) {
+       window.onload = () => {
+        if(localStorage.getItem('email')) {
       fetch(`https://passkeys-demo.riabkov.com/api/generate-authentication-options?email=${localStorage.getItem('email')}`)
         .then(resp => resp.json())
         .then(opts => {
@@ -90,6 +91,7 @@
         });
 
       }
+       }
     </script>
   </head>
 
