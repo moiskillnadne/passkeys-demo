@@ -441,7 +441,10 @@ app.post('/api/verify-registration', async (req, res): Promise<any> => {
         counter: credential.counter,
         transports: body.response.transports,
       };
-      inMemoryDB.userCredentials[email].push(newCredential);
+
+      const cred = inMemoryDB.userCredentials[email] || [];
+
+      inMemoryDB.userCredentials[email] = [...cred, newCredential];
     }
   }
 
