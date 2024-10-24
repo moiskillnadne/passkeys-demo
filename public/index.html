@@ -3,7 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./ui.css" />
+    <title>Passkeys Demo</title>
+
     <script src="https://unpkg.com/@simplewebauthn/browser@11.0.0/dist/bundle/index.es5.umd.min.js"></script>
+
     <script>
       const { startAuthentication } = SimpleWebAuthnBrowser;
       /**
@@ -82,12 +87,38 @@
             });
         });
     </script>
-    <link rel="stylesheet" href="./styles.css" />
-    <title>SimpleWebAuthn Example Site</title>
   </head>
+
   <body>
     <div class="container">
-      <h1>SimpleWebAuthn Example Site</h1>
+      <h1>Passkeys Demo</h1>
+
+      <div class="pb-20">
+        <h2>WebAuthn</h2>
+        <p>
+          This is a demo of the WebAuthn API. You can register and authenticate using a security key
+          or biometric device.
+        </p>
+      </div>
+
+      <div id="signup-form-parent" class="pb-20">
+        <form id="signup-form">
+          <h3>Signup Form</h3>
+
+          <label for="email">Email</label>
+          <input type="text" name="email" autocomplete="username webauthn" autofocus />
+          <br />
+          
+          <button id="btnAuthBegin" type="submit">
+            <strong>Signup</strong>
+          </button>
+        </form>
+      </div>
+
+      <div id="user-info" class="hidden">
+        <h3>User Info</h3>
+        <p id="user-info-email"><span class="label">Email:</span> <span class="value"></span></p>
+      </div>
 
       <div class="controls">
         <section id="registration">
@@ -127,12 +158,51 @@
 
       <p class="systemError"></p>
     </div>
+
     <script>
       const { browserSupportsWebAuthn, startRegistration } = SimpleWebAuthnBrowser;
 
       function stopSubmit(event) {
         event.preventDefault();
       }
+
+      // User Signup
+
+      document.querySelector('#signup-form').addEventListener('submit', async (event) => {
+        stopSubmit(event)
+
+        const email = document.querySelector('input[name="email"]').value;
+
+        const resp = await fetch('https://passkeys-demo.riabkov.com/api/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email }),
+        });
+
+        let attResp;
+        try {
+          const resp = await resp.json();
+
+          if(resp.success) {
+            alert('User registered!');
+
+            document.querySelector('#signup-form-parent').classList.add('hidden');
+
+            sessionStorage.setItem('email', email);
+
+            document.querySelector('#user-info-email .value').innerText = email;
+            document.querySelector('#user-info').classList.remove('hidden');
+          } else {
+            alert('Oh no, something went wrong!');
+          }
+
+        } catch (error) {
+          console.error(error);
+          return;
+        }
+      });
 
       /**
        * A simple way to control how debug content is written to a debug console element
@@ -168,7 +238,7 @@
           elemError.innerHTML = '';
           elemDebug.innerHTML = '';
 
-          const resp = await fetch('/generate-registration-options');
+          const resp = await fetch('/api/generate-registration-options');
 
           let attResp;
           try {
@@ -190,7 +260,7 @@
             throw error;
           }
 
-          const verificationResp = await fetch('/verify-registration', {
+          const verificationResp = await fetch('/api/verify-registration', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -223,7 +293,7 @@
           elemError.innerHTML = '';
           elemDebug.innerHTML = '';
 
-          const resp = await fetch('/generate-authentication-options');
+          const resp = await fetch('/api/generate-authentication-options');
 
           let asseResp;
           try {
@@ -239,7 +309,7 @@
             throw new Error(error);
           }
 
-          const verificationResp = await fetch('/verify-authentication', {
+          const verificationResp = await fetch('/api/verify-authentication', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
