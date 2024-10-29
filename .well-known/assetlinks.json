@@ -1,0 +1,15 @@
+[
+  {
+    "relation" : [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target" : {
+      "namespace" : "com.sciencesoft.passkey_test",
+      "package_name" : "com.sciencesoft.passkey_test",
+      "sha256_cert_fingerprints" : [
+        "C6:3F:BD:5D:C7:AE:02:11:30:BA:F1:D4:7E:97:5B:7D:D5:5A:6F:A0:55:FC:D5:4C:E0:AD:21:8B:0A:1A:68:EE"
+      ]
+    }
+  }
+]

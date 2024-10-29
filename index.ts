@@ -78,6 +78,9 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 export const rpID = RP_ID;
 export const expectedOrigin = EXPECTED_ORIGIN
 
+export const webOrigin = expectedOrigin
+export const androidOrigin = "android:apk-key-hash:xj-9XceuAhEwuvHUfpdbfdVab6BV_NVM4K0hiwoaaO4"
+
 
 const inMemoryDB: InMemoryDB = {
   users: {},
@@ -413,7 +416,7 @@ app.post('/api/verify-registration', async (req, res): Promise<any> => {
     const opts: VerifyRegistrationResponseOpts = {
       response: body,
       expectedChallenge: `${expectedChallenge}`,
-      expectedOrigin,
+      expectedOrigin: [webOrigin, androidOrigin],
       expectedRPID: rpID,
       requireUserVerification: false,
     };
@@ -653,7 +656,7 @@ app.post('/api/verify-authentication', async (req, res): Promise<any> => {
     const opts: VerifyAuthenticationResponseOpts = {
       response: body,
       expectedChallenge: `${expectedChallenge}`,
-      expectedOrigin,
+      expectedOrigin: [webOrigin, androidOrigin],
       expectedRPID: rpID,
       credential: dbCredential,
       requireUserVerification: false,
